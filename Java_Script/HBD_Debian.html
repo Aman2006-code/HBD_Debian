@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debian Swirl in JS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Use a monospace font for the ASCII art to render correctly */
+        pre {
+            font-family: 'Roboto Mono', monospace;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 flex items-center justify-center min-h-screen">
+    <!-- The <pre> tag is used to display preformatted text, preserving spaces and line breaks -->
+    <pre id="output" class="p-4 bg-gray-800 rounded-lg shadow-lg text-green-400"></pre>
+
+    <script>
+        // --- 1. Set Constants ---
+        const WIDTH = 40;
+        const HEIGHT = 22;
+        const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
+        const SPIRAL_CONST_B = Math.log(GOLDEN_RATIO) / (Math.PI / 2);
+        const SPIRAL_CONST_A = 1.2;
+
+        // --- 2. Define a Canvas ---
+        // Create a 2D array (an array of arrays) and fill it with spaces.
+        const canvas = Array.from({ length: HEIGHT }, () => Array(WIDTH).fill(' '));
+
+        // --- 3. Loop through the Angle (theta) ---
+        let theta = 0.0;
+        while (theta < 6 * Math.PI) {
+            // Calculate the radius for a logarithmic spiral
+            const radius = SPIRAL_CONST_A * Math.exp(SPIRAL_CONST_B * theta);
+
+            // Convert from polar coordinates (radius, theta) to Cartesian coordinates (x, y)
+            const x = radius * Math.cos(theta);
+            const y = -radius * Math.sin(theta); // Negative to flip the y-axis for screen coordinates
+
+            // --- 4. Convert to Screen Coordinates ---
+            // Scale and translate the coordinates to fit within the canvas dimensions.
+            // Math.floor is used to get integer coordinates for the array indices.
+            const screenX = Math.floor(x * 2 + WIDTH / 2);
+            const screenY = Math.floor(y + HEIGHT / 2);
+
+            // --- 5. Draw on the Canvas ---
+            // Check if the calculated coordinates are within the bounds of the canvas
+            if (screenX >= 0 && screenX < WIDTH && screenY >= 0 && screenY < HEIGHT) {
+                canvas[screenY][screenX] = '$';
+            }
+
+            // Increment the angle for the next point
+            theta += 0.02;
+        }
+
+        // --- 6. Set the Center Point ---
+        // Place an '@' symbol at the calculated center of the canvas.
+        canvas[Math.floor(HEIGHT / 2)][Math.floor(WIDTH / 2)] = '@';
+
+        // --- 7. Build and Print the Output ---
+        let outputString = "\n--- Happy Birthday Debian!! ---\n";
+
+        // Iterate through the canvas rows in reverse order to print from bottom to top
+        for (let i = canvas.length - 1; i >= 0; i--) {
+            const row = canvas[i];
+            // Reverse the characters in the row, join them into a string, and add a newline
+            outputString += row.slice().reverse().join('') + '\n';
+        }
+
+        outputString += "\n         Debian\n";
+        outputString += "-------------------------------------------\n";
+
+        // --- 8. Display on the Web Page ---
+        // Find the <pre> element by its ID and set its text content to our generated string.
+        document.getElementById('output').textContent = outputString;
+    </script>
+</body>
+</html>
