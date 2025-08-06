@@ -19,6 +19,7 @@ In celebration of Debian’s 32nd birthday, contributors are invited to recreate
 - Java Script
 - Type Script
 - Rust
+- R
 - Kotlin
 - Go
 
